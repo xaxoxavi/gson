@@ -28,6 +28,8 @@ import com.google.gson.stream.MalformedJsonException;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Reads and writes GSON parse trees over streams.
@@ -69,7 +71,8 @@ public final class Streams {
    * Writes the JSON element to the writer, recursively.
    */
   public static void write(JsonElement element, JsonWriter writer) throws IOException {
-    TypeAdapters.JSON_ELEMENT.write(writer, element);
+    Set<String> hashSet = new HashSet<String>();
+    TypeAdapters.JSON_ELEMENT.write(writer, element, hashSet);
   }
 
   public static Writer writerForAppendable(Appendable appendable) {

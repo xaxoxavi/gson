@@ -35,11 +35,7 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Type adapter that reflects over the fields and methods of a class.
@@ -117,12 +113,12 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
     final TypeAdapter<?> typeAdapter = mapped;
     return new ReflectiveTypeAdapterFactory.BoundField(name, serialize, deserialize) {
       @SuppressWarnings({"unchecked", "rawtypes"}) // the type adapter and field type always agree
-      @Override void write(JsonWriter writer, Object value)
+      @Override void write(JsonWriter writer, Object value, Set hashSet)
           throws IOException, IllegalAccessException {
         Object fieldValue = field.get(value);
         TypeAdapter t = jsonAdapterPresent ? typeAdapter
             : new TypeAdapterRuntimeTypeWrapper(context, typeAdapter, fieldType.getType());
-        t.write(writer, fieldValue);
+        t.write(writer, fieldValue, hashSet);
       }
       @Override void read(JsonReader reader, Object value)
           throws IOException, IllegalAccessException {
@@ -188,7 +184,7 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
       this.deserialized = deserialized;
     }
     abstract boolean writeField(Object value) throws IOException, IllegalAccessException;
-    abstract void write(JsonWriter writer, Object value) throws IOException, IllegalAccessException;
+    abstract void write(JsonWriter writer, Object value,  Set hashSet) throws IOException, IllegalAccessException;
     abstract void read(JsonReader reader, Object value) throws IOException, IllegalAccessException;
   }
 
@@ -229,18 +225,20 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
       return instance;
     }
 
-    @Override public void write(JsonWriter out, T value) throws IOException {
-      if (value == null) {
+    @Override public void write(JsonWriter out, T value, Set<String> hashSet) throws IOException {
+      if (value == null || hashSet.contains(value.toString())) {
         out.nullValue();
         return;
       }
+
+      hashSet.add(value.toString());
 
       out.beginObject();
       try {
         for (BoundField boundField : boundFields.values()) {
           if (boundField.writeField(value)) {
             out.name(boundField.name);
-            boundField.write(out, value);
+            boundField.write(out, value,hashSet);
           }
         }
       } catch (IllegalAccessException e) {

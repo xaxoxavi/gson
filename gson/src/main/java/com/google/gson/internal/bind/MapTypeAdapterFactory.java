@@ -36,6 +36,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Adapts maps to either JSON objects or JSON arrays.
@@ -195,7 +196,7 @@ public final class MapTypeAdapterFactory implements TypeAdapterFactory {
       return map;
     }
 
-    @Override public void write(JsonWriter out, Map<K, V> map) throws IOException {
+    @Override public void write(JsonWriter out, Map<K, V> map, Set<String> hashSet) throws IOException {
       if (map == null) {
         out.nullValue();
         return;
@@ -205,7 +206,7 @@ public final class MapTypeAdapterFactory implements TypeAdapterFactory {
         out.beginObject();
         for (Map.Entry<K, V> entry : map.entrySet()) {
           out.name(String.valueOf(entry.getKey()));
-          valueTypeAdapter.write(out, entry.getValue());
+          valueTypeAdapter.write(out, entry.getValue(), hashSet);
         }
         out.endObject();
         return;
@@ -227,7 +228,7 @@ public final class MapTypeAdapterFactory implements TypeAdapterFactory {
         for (int i = 0; i < keys.size(); i++) {
           out.beginArray(); // entry array
           Streams.write(keys.get(i), out);
-          valueTypeAdapter.write(out, values.get(i));
+          valueTypeAdapter.write(out, values.get(i), hashSet);
           out.endArray();
         }
         out.endArray();
@@ -236,7 +237,7 @@ public final class MapTypeAdapterFactory implements TypeAdapterFactory {
         for (int i = 0; i < keys.size(); i++) {
           JsonElement keyElement = keys.get(i);
           out.name(keyToString(keyElement));
-          valueTypeAdapter.write(out, values.get(i));
+          valueTypeAdapter.write(out, values.get(i),hashSet );
         }
         out.endObject();
       }

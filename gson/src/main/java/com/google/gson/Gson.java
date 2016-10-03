@@ -25,11 +25,7 @@ import java.io.Writer;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicLongArray;
@@ -283,7 +279,7 @@ public final class Gson {
         }
         return in.nextDouble();
       }
-      @Override public void write(JsonWriter out, Number value) throws IOException {
+      @Override public void write(JsonWriter out, Number value, Set<String> hashSet) throws IOException {
         if (value == null) {
           out.nullValue();
           return;
@@ -307,7 +303,7 @@ public final class Gson {
         }
         return (float) in.nextDouble();
       }
-      @Override public void write(JsonWriter out, Number value) throws IOException {
+      @Override public void write(JsonWriter out, Number value, Set<String> hashSet) throws IOException {
         if (value == null) {
           out.nullValue();
           return;
@@ -339,7 +335,7 @@ public final class Gson {
         }
         return in.nextLong();
       }
-      @Override public void write(JsonWriter out, Number value) throws IOException {
+      @Override public void write(JsonWriter out, Number value, Set<String> hashSet) throws IOException {
         if (value == null) {
           out.nullValue();
           return;
@@ -351,8 +347,8 @@ public final class Gson {
 
   private static TypeAdapter<AtomicLong> atomicLongAdapter(final TypeAdapter<Number> longAdapter) {
     return new TypeAdapter<AtomicLong>() {
-      @Override public void write(JsonWriter out, AtomicLong value) throws IOException {
-        longAdapter.write(out, value.get());
+      @Override public void write(JsonWriter out, AtomicLong value, Set<String> hashSet) throws IOException {
+        longAdapter.write(out, value.get(), hashSet);
       }
       @Override public AtomicLong read(JsonReader in) throws IOException {
         Number value = longAdapter.read(in);
@@ -363,10 +359,10 @@ public final class Gson {
 
   private static TypeAdapter<AtomicLongArray> atomicLongArrayAdapter(final TypeAdapter<Number> longAdapter) {
     return new TypeAdapter<AtomicLongArray>() {
-      @Override public void write(JsonWriter out, AtomicLongArray value) throws IOException {
+      @Override public void write(JsonWriter out, AtomicLongArray value, Set<String> hashSet) throws IOException {
         out.beginArray();
         for (int i = 0, length = value.length(); i < length; i++) {
-          longAdapter.write(out, value.get(i));
+          longAdapter.write(out, value.get(i), hashSet);
         }
         out.endArray();
       }
@@ -666,7 +662,8 @@ public final class Gson {
     boolean oldSerializeNulls = writer.getSerializeNulls();
     writer.setSerializeNulls(serializeNulls);
     try {
-      ((TypeAdapter<Object>) adapter).write(writer, src);
+      Set<String> hashSet = new HashSet<String>();
+      ((TypeAdapter<Object>) adapter).write(writer, src, hashSet);
     } catch (IOException e) {
       throw new JsonIOException(e);
     } finally {
@@ -969,11 +966,11 @@ public final class Gson {
       return delegate.read(in);
     }
 
-    @Override public void write(JsonWriter out, T value) throws IOException {
+    @Override public void write(JsonWriter out, T value, Set<String> hashSet) throws IOException {
       if (delegate == null) {
         throw new IllegalStateException();
       }
-      delegate.write(out, value);
+      delegate.write(out, value, hashSet);
     }
   }
 

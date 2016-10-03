@@ -18,6 +18,7 @@ package com.google.gson.functional;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -179,7 +180,7 @@ public final class RuntimeTypeAdapterFactoryFunctionalTest extends TestCase {
           return delegate.fromJsonTree(jsonElement);
         }
 
-        @Override public void write(JsonWriter out, R value) throws IOException {
+        @Override public void write(JsonWriter out, R value, Set<String> hashSet) throws IOException {
           Class<?> srcType = value.getClass();
           String label = subtypeToLabel.get(srcType);
           @SuppressWarnings("unchecked") // registration requires that subtype extends T

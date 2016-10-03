@@ -701,7 +701,7 @@ public class DefaultTypeAdaptersTest extends TestCase {
   @SuppressWarnings("rawtypes")
   private static class MyClassTypeAdapter extends TypeAdapter<Class> {
     @Override
-    public void write(JsonWriter out, Class value) throws IOException {
+    public void write(JsonWriter out, Class value, Set<String> hashSet) throws IOException {
       out.value(value.getName());
     }
     @Override
@@ -720,7 +720,7 @@ public class DefaultTypeAdaptersTest extends TestCase {
     NumberAsStringAdapter(Class<? extends Number> type) throws Exception {
       this.constructor = type.getConstructor(String.class);
     }
-    @Override public void write(JsonWriter out, Number value) throws IOException {
+    @Override public void write(JsonWriter out, Number value, Set<String> hashSet) throws IOException {
       out.value(value.toString());
     }
     @Override public Number read(JsonReader in) throws IOException {

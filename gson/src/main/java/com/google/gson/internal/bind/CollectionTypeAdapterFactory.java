@@ -29,6 +29,7 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Adapt a homogeneous collection of objects.
@@ -86,7 +87,7 @@ public final class CollectionTypeAdapterFactory implements TypeAdapterFactory {
       return collection;
     }
 
-    @Override public void write(JsonWriter out, Collection<E> collection) throws IOException {
+    @Override public void write(JsonWriter out, Collection<E> collection, Set<String> hashSet) throws IOException {
       if (collection == null) {
         out.nullValue();
         return;
@@ -94,7 +95,7 @@ public final class CollectionTypeAdapterFactory implements TypeAdapterFactory {
 
       out.beginArray();
       for (E element : collection) {
-        elementTypeAdapter.write(out, element);
+        elementTypeAdapter.write(out, element, hashSet);
       }
       out.endArray();
     }

@@ -25,9 +25,11 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Set;
 
 /**
  * Adapter for java.sql.Date. Although this class appears stateless, it is not.
@@ -61,7 +63,7 @@ public final class SqlDateTypeAdapter extends TypeAdapter<java.sql.Date> {
   }
 
   @Override
-  public synchronized void write(JsonWriter out, java.sql.Date value) throws IOException {
+  public synchronized void write(JsonWriter out, Date value, Set<String> hashSet) throws IOException {
     out.value(value == null ? null : format.format(value));
   }
 }

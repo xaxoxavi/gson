@@ -20,6 +20,8 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Set;
+
 import junit.framework.TestCase;
 
 /**
@@ -27,7 +29,7 @@ import junit.framework.TestCase;
  */
 public class OverrideCoreTypeAdaptersTest extends TestCase {
   private static final TypeAdapter<Boolean> booleanAsIntAdapter = new TypeAdapter<Boolean>() {
-    @Override public void write(JsonWriter out, Boolean value) throws IOException {
+    @Override public void write(JsonWriter out, Boolean value, Set<String> hashSet) throws IOException {
       out.value(value ? 1 : 0);
     }
     @Override public Boolean read(JsonReader in) throws IOException {
@@ -37,7 +39,7 @@ public class OverrideCoreTypeAdaptersTest extends TestCase {
   };
 
   private static final TypeAdapter<String> swapCaseStringAdapter = new TypeAdapter<String>() {
-    @Override public void write(JsonWriter out, String value) throws IOException {
+    @Override public void write(JsonWriter out, String value, Set<String> hashSet) throws IOException {
       out.value(value.toUpperCase(Locale.US));
     }
     @Override public String read(JsonReader in) throws IOException {

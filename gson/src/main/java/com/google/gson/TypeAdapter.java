@@ -26,6 +26,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Converts Java objects to and from JSON.
@@ -62,7 +64,7 @@ import java.io.Writer;
  * this case the type adapter binds a rich Java class to a compact JSON value.
  *
  * <p>The {@link #read(JsonReader) read()} method must read exactly one value
- * and {@link #write(JsonWriter,Object) write()} must write exactly one value.
+ * and {@link #write(JsonWriter, Object, Set) write()} must write exactly one value.
  * For primitive types this is means readers should make exactly one call to
  * {@code nextBoolean()}, {@code nextDouble()}, {@code nextInt()}, {@code
  * nextLong()}, {@code nextString()} or {@code nextNull()}. Writers should make
@@ -123,15 +125,16 @@ public abstract class TypeAdapter<T> {
    * for {@code value}.
    *
    * @param value the Java object to write. May be null.
+   * @param hashSet
    */
-  public abstract void write(JsonWriter out, T value) throws IOException;
+  public abstract void write(JsonWriter out, T value, Set<String> hashSet) throws IOException;
 
   /**
    * Converts {@code value} to a JSON document and writes it to {@code out}.
    * Unlike Gson's similar {@link Gson#toJson(JsonElement, Appendable) toJson}
    * method, this write is strict. Create a {@link
    * JsonWriter#setLenient(boolean) lenient} {@code JsonWriter} and call
-   * {@link #write(com.google.gson.stream.JsonWriter, Object)} for lenient
+   * {@link #write(JsonWriter, Object, Set)} for lenient
    * writing.
    *
    * @param value the Java object to convert. May be null.
@@ -139,7 +142,8 @@ public abstract class TypeAdapter<T> {
    */
   public final void toJson(Writer out, T value) throws IOException {
     JsonWriter writer = new JsonWriter(out);
-    write(writer, value);
+    Set<String> hashSet = new HashSet<String>();
+    write(writer, value, hashSet);
   }
 
   /**
@@ -184,11 +188,11 @@ public abstract class TypeAdapter<T> {
    */
   public final TypeAdapter<T> nullSafe() {
     return new TypeAdapter<T>() {
-      @Override public void write(JsonWriter out, T value) throws IOException {
+      @Override public void write(JsonWriter out, T value, Set<String> hashSet) throws IOException {
         if (value == null) {
           out.nullValue();
         } else {
-          TypeAdapter.this.write(out, value);
+          TypeAdapter.this.write(out, value, hashSet);
         }
       }
       @Override public T read(JsonReader reader) throws IOException {
@@ -205,7 +209,7 @@ public abstract class TypeAdapter<T> {
    * Converts {@code value} to a JSON document. Unlike Gson's similar {@link
    * Gson#toJson(Object) toJson} method, this write is strict. Create a {@link
    * JsonWriter#setLenient(boolean) lenient} {@code JsonWriter} and call
-   * {@link #write(com.google.gson.stream.JsonWriter, Object)} for lenient
+   * {@link #write(JsonWriter, Object, Set)} for lenient
    * writing.
    *
    * @param value the Java object to convert. May be null.
@@ -231,7 +235,8 @@ public abstract class TypeAdapter<T> {
   public final JsonElement toJsonTree(T value) {
     try {
       JsonTreeWriter jsonWriter = new JsonTreeWriter();
-      write(jsonWriter, value);
+      Set<String> hashSet = new HashSet<String>();
+      write(jsonWriter, value,  hashSet);
       return jsonWriter.get();
     } catch (IOException e) {
       throw new JsonIOException(e);

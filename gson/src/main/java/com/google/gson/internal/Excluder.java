@@ -33,6 +33,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class selects which fields and types to omit. It is configurable,
@@ -129,12 +130,12 @@ public final class Excluder implements TypeAdapterFactory, Cloneable {
         return delegate().read(in);
       }
 
-      @Override public void write(JsonWriter out, T value) throws IOException {
+      @Override public void write(JsonWriter out, T value, Set<String> hashSet) throws IOException {
         if (skipSerialize) {
           out.nullValue();
           return;
         }
-        delegate().write(out, value);
+        delegate().write(out, value, hashSet);
       }
 
       private TypeAdapter<T> delegate() {

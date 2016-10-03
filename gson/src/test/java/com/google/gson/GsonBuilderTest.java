@@ -18,6 +18,7 @@ package com.google.gson;
 
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -31,7 +32,7 @@ import com.google.gson.stream.JsonWriter;
  */
 public class GsonBuilderTest extends TestCase {
   private static final TypeAdapter<Object> NULL_TYPE_ADAPTER = new TypeAdapter<Object>() {
-    @Override public void write(JsonWriter out, Object value) {
+    @Override public void write(JsonWriter out, Object value, Set<String> hashSet) {
       throw new AssertionError();
     }
     @Override public Object read(JsonReader in) {

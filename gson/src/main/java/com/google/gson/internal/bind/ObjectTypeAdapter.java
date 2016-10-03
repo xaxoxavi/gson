@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Adapts types whose static type is only 'Object'. Uses getClass() on
@@ -91,7 +92,7 @@ public final class ObjectTypeAdapter extends TypeAdapter<Object> {
   }
 
   @SuppressWarnings("unchecked")
-  @Override public void write(JsonWriter out, Object value) throws IOException {
+  @Override public void write(JsonWriter out, Object value, Set<String> hashSet) throws IOException {
     if (value == null) {
       out.nullValue();
       return;
@@ -104,6 +105,6 @@ public final class ObjectTypeAdapter extends TypeAdapter<Object> {
       return;
     }
 
-    typeAdapter.write(out, value);
+    typeAdapter.write(out, value, hashSet);
   }
 }

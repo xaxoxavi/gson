@@ -30,6 +30,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Adapter for Time. Although this class appears stateless, it is not.
@@ -60,7 +61,7 @@ public final class TimeTypeAdapter extends TypeAdapter<Time> {
     }
   }
 
-  @Override public synchronized void write(JsonWriter out, Time value) throws IOException {
+  @Override public synchronized void write(JsonWriter out, Time value, Set<String> hashSet) throws IOException {
     out.value(value == null ? null : format.format(value));
   }
 }

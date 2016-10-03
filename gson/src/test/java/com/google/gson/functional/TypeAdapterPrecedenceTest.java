@@ -29,6 +29,8 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.Set;
+
 import junit.framework.TestCase;
 
 public final class TypeAdapterPrecedenceTest extends TestCase {
@@ -143,7 +145,7 @@ public final class TypeAdapterPrecedenceTest extends TestCase {
       @Override public Foo read(JsonReader in) throws IOException {
         return new Foo(in.nextString() + " via " + name);
       }
-      @Override public void write(JsonWriter out, Foo value) throws IOException {
+      @Override public void write(JsonWriter out, Foo value, Set<String> hashSet) throws IOException {
         out.value(value.name + " via " + name);
       }
     };

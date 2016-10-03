@@ -34,6 +34,8 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Locale;
+import java.util.Set;
+
 import junit.framework.TestCase;
 
 /**
@@ -69,7 +71,7 @@ public final class JsonAdapterAnnotationOnClassesTest extends TestCase {
 
   public void testRegisteredAdapterOverridesJsonAdapter() {
     TypeAdapter<A> typeAdapter = new TypeAdapter<A>() {
-      @Override public void write(JsonWriter out, A value) throws IOException {
+      @Override public void write(JsonWriter out, A value, Set<String> hashSet) throws IOException {
         out.value("registeredAdapter");
       }
       @Override public A read(JsonReader in) throws IOException {
@@ -146,7 +148,7 @@ public final class JsonAdapterAnnotationOnClassesTest extends TestCase {
       this.value = value;
     }
     static final class JsonAdapter extends TypeAdapter<A> {
-      @Override public void write(JsonWriter out, A value) throws IOException {
+      @Override public void write(JsonWriter out, A value, Set<String> hashSet) throws IOException {
         out.value("jsonAdapter");
       }
       @Override public A read(JsonReader in) throws IOException {
@@ -165,7 +167,7 @@ public final class JsonAdapterAnnotationOnClassesTest extends TestCase {
     static final class JsonAdapterFactory implements TypeAdapterFactory {
       @Override public <T> TypeAdapter<T> create(Gson gson, final TypeToken<T> type) {
         return new TypeAdapter<T>() {
-          @Override public void write(JsonWriter out, T value) throws IOException {
+          @Override public void write(JsonWriter out, T value, Set<String> hashSet) throws IOException {
             out.value("jsonAdapterFactory");
           }
           @SuppressWarnings("unchecked")
@@ -203,7 +205,7 @@ public final class JsonAdapterAnnotationOnClassesTest extends TestCase {
     }
   }
   private static class UserJsonAdapter extends TypeAdapter<User> {
-    @Override public void write(JsonWriter out, User user) throws IOException {
+    @Override public void write(JsonWriter out, User user, Set<String> hashSet) throws IOException {
       // implement write: combine firstName and lastName into name
       out.beginObject();
       out.name("name");
@@ -227,7 +229,7 @@ public final class JsonAdapterAnnotationOnClassesTest extends TestCase {
 
   private static class NullableClassJsonAdapter extends TypeAdapter<NullableClass> {
     @Override
-    public void write(JsonWriter out, NullableClass value) throws IOException {
+    public void write(JsonWriter out, NullableClass value, Set<String> hashSet) throws IOException {
       out.value("nullable");
     }
 
@@ -241,7 +243,7 @@ public final class JsonAdapterAnnotationOnClassesTest extends TestCase {
   @JsonAdapter(FooJsonAdapter.class)
   private static enum Foo { BAR, BAZ }
   private static class FooJsonAdapter extends TypeAdapter<Foo> {
-    @Override public void write(JsonWriter out, Foo value) throws IOException {
+    @Override public void write(JsonWriter out, Foo value, Set<String> hashSet) throws IOException {
       out.value(value.name().toLowerCase(Locale.US));
     }
 

@@ -24,18 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Calendar;
-import java.util.Currency;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
@@ -68,7 +57,7 @@ public final class TypeAdapters {
   @SuppressWarnings("rawtypes")
   public static final TypeAdapter<Class> CLASS = new TypeAdapter<Class>() {
     @Override
-    public void write(JsonWriter out, Class value) throws IOException {
+    public void write(JsonWriter out, Class value, Set<String> hashSet) throws IOException {
       if (value == null) {
         out.nullValue();
       } else {
@@ -131,7 +120,7 @@ public final class TypeAdapters {
       return bitset;
     }
 
-    @Override public void write(JsonWriter out, BitSet src) throws IOException {
+    @Override public void write(JsonWriter out, BitSet src, Set<String> hashSet) throws IOException {
       if (src == null) {
         out.nullValue();
         return;
@@ -161,7 +150,7 @@ public final class TypeAdapters {
       return in.nextBoolean();
     }
     @Override
-    public void write(JsonWriter out, Boolean value) throws IOException {
+    public void write(JsonWriter out, Boolean value, Set<String> hashSet) throws IOException {
       out.value(value);
     }
   };
@@ -179,7 +168,7 @@ public final class TypeAdapters {
       return Boolean.valueOf(in.nextString());
     }
 
-    @Override public void write(JsonWriter out, Boolean value) throws IOException {
+    @Override public void write(JsonWriter out, Boolean value, Set<String> hashSet) throws IOException {
       out.value(value == null ? "null" : value.toString());
     }
   };
@@ -202,7 +191,7 @@ public final class TypeAdapters {
       }
     }
     @Override
-    public void write(JsonWriter out, Number value) throws IOException {
+    public void write(JsonWriter out, Number value, Set<String> hashSet) throws IOException {
       out.value(value);
     }
   };
@@ -224,7 +213,7 @@ public final class TypeAdapters {
       }
     }
     @Override
-    public void write(JsonWriter out, Number value) throws IOException {
+    public void write(JsonWriter out, Number value, Set<String> hashSet) throws IOException {
       out.value(value);
     }
   };
@@ -246,7 +235,7 @@ public final class TypeAdapters {
       }
     }
     @Override
-    public void write(JsonWriter out, Number value) throws IOException {
+    public void write(JsonWriter out, Number value, Set<String> hashSet) throws IOException {
       out.value(value);
     }
   };
@@ -261,7 +250,7 @@ public final class TypeAdapters {
         throw new JsonSyntaxException(e);
       }
     }
-    @Override public void write(JsonWriter out, AtomicInteger value) throws IOException {
+    @Override public void write(JsonWriter out, AtomicInteger value, Set<String> hashSet) throws IOException {
       out.value(value.get());
     }
   }.nullSafe();
@@ -272,7 +261,7 @@ public final class TypeAdapters {
     @Override public AtomicBoolean read(JsonReader in) throws IOException {
       return new AtomicBoolean(in.nextBoolean());
     }
-    @Override public void write(JsonWriter out, AtomicBoolean value) throws IOException {
+    @Override public void write(JsonWriter out, AtomicBoolean value, Set<String> hashSet) throws IOException {
       out.value(value.get());
     }
   }.nullSafe();
@@ -299,7 +288,7 @@ public final class TypeAdapters {
         }
         return array;
     }
-    @Override public void write(JsonWriter out, AtomicIntegerArray value) throws IOException {
+    @Override public void write(JsonWriter out, AtomicIntegerArray value, Set<String> hashSet) throws IOException {
       out.beginArray();
       for (int i = 0, length = value.length(); i < length; i++) {
         out.value(value.get(i));
@@ -324,7 +313,7 @@ public final class TypeAdapters {
       }
     }
     @Override
-    public void write(JsonWriter out, Number value) throws IOException {
+    public void write(JsonWriter out, Number value, Set<String> hashSet) throws IOException {
       out.value(value);
     }
   };
@@ -339,7 +328,7 @@ public final class TypeAdapters {
       return (float) in.nextDouble();
     }
     @Override
-    public void write(JsonWriter out, Number value) throws IOException {
+    public void write(JsonWriter out, Number value, Set<String> hashSet) throws IOException {
       out.value(value);
     }
   };
@@ -354,7 +343,7 @@ public final class TypeAdapters {
       return in.nextDouble();
     }
     @Override
-    public void write(JsonWriter out, Number value) throws IOException {
+    public void write(JsonWriter out, Number value, Set<String> hashSet) throws IOException {
       out.value(value);
     }
   };
@@ -374,7 +363,7 @@ public final class TypeAdapters {
       }
     }
     @Override
-    public void write(JsonWriter out, Number value) throws IOException {
+    public void write(JsonWriter out, Number value, Set<String> hashSet) throws IOException {
       out.value(value);
     }
   };
@@ -395,7 +384,7 @@ public final class TypeAdapters {
       return str.charAt(0);
     }
     @Override
-    public void write(JsonWriter out, Character value) throws IOException {
+    public void write(JsonWriter out, Character value, Set<String> hashSet) throws IOException {
       out.value(value == null ? null : String.valueOf(value));
     }
   };
@@ -418,7 +407,7 @@ public final class TypeAdapters {
       return in.nextString();
     }
     @Override
-    public void write(JsonWriter out, String value) throws IOException {
+    public void write(JsonWriter out, String value, Set<String> hashSet) throws IOException {
       out.value(value);
     }
   };
@@ -436,7 +425,7 @@ public final class TypeAdapters {
       }
     }
 
-    @Override public void write(JsonWriter out, BigDecimal value) throws IOException {
+    @Override public void write(JsonWriter out, BigDecimal value, Set<String> hashSet) throws IOException {
       out.value(value);
     }
   };
@@ -454,7 +443,7 @@ public final class TypeAdapters {
       }
     }
 
-    @Override public void write(JsonWriter out, BigInteger value) throws IOException {
+    @Override public void write(JsonWriter out, BigInteger value, Set<String> hashSet) throws IOException {
       out.value(value);
     }
   };
@@ -471,7 +460,7 @@ public final class TypeAdapters {
       return new StringBuilder(in.nextString());
     }
     @Override
-    public void write(JsonWriter out, StringBuilder value) throws IOException {
+    public void write(JsonWriter out, StringBuilder value, Set<String> hashSet) throws IOException {
       out.value(value == null ? null : value.toString());
     }
   };
@@ -489,7 +478,7 @@ public final class TypeAdapters {
       return new StringBuffer(in.nextString());
     }
     @Override
-    public void write(JsonWriter out, StringBuffer value) throws IOException {
+    public void write(JsonWriter out, StringBuffer value, Set<String> hashSet) throws IOException {
       out.value(value == null ? null : value.toString());
     }
   };
@@ -508,7 +497,7 @@ public final class TypeAdapters {
       return "null".equals(nextString) ? null : new URL(nextString);
     }
     @Override
-    public void write(JsonWriter out, URL value) throws IOException {
+    public void write(JsonWriter out, URL value, Set<String> hashSet) throws IOException {
       out.value(value == null ? null : value.toExternalForm());
     }
   };
@@ -530,7 +519,7 @@ public final class TypeAdapters {
       }
     }
     @Override
-    public void write(JsonWriter out, URI value) throws IOException {
+    public void write(JsonWriter out, URI value, Set<String> hashSet) throws IOException {
       out.value(value == null ? null : value.toASCIIString());
     }
   };
@@ -548,7 +537,7 @@ public final class TypeAdapters {
       return InetAddress.getByName(in.nextString());
     }
     @Override
-    public void write(JsonWriter out, InetAddress value) throws IOException {
+    public void write(JsonWriter out, InetAddress value, Set<String> hashSet) throws IOException {
       out.value(value == null ? null : value.getHostAddress());
     }
   };
@@ -566,7 +555,7 @@ public final class TypeAdapters {
       return java.util.UUID.fromString(in.nextString());
     }
     @Override
-    public void write(JsonWriter out, UUID value) throws IOException {
+    public void write(JsonWriter out, UUID value, Set<String> hashSet) throws IOException {
       out.value(value == null ? null : value.toString());
     }
   };
@@ -579,7 +568,7 @@ public final class TypeAdapters {
       return Currency.getInstance(in.nextString());
     }
     @Override
-    public void write(JsonWriter out, Currency value) throws IOException {
+    public void write(JsonWriter out, Currency value, Set<String> hashSet) throws IOException {
       out.value(value.getCurrencyCode());
     }
   }.nullSafe();
@@ -599,8 +588,8 @@ public final class TypeAdapters {
           return date != null ? new Timestamp(date.getTime()) : null;
         }
 
-        @Override public void write(JsonWriter out, Timestamp value) throws IOException {
-          dateTypeAdapter.write(out, value);
+        @Override public void write(JsonWriter out, Timestamp value, Set<String> hashSet) throws IOException {
+          dateTypeAdapter.write(out, value, hashSet);
         }
       };
     }
@@ -649,7 +638,7 @@ public final class TypeAdapters {
     }
 
     @Override
-    public void write(JsonWriter out, Calendar value) throws IOException {
+    public void write(JsonWriter out, Calendar value, Set<String> hashSet) throws IOException {
       if (value == null) {
         out.nullValue();
         return;
@@ -704,7 +693,7 @@ public final class TypeAdapters {
       }
     }
     @Override
-    public void write(JsonWriter out, Locale value) throws IOException {
+    public void write(JsonWriter out, Locale value, Set<String> hashSet) throws IOException {
       out.value(value == null ? null : value.toString());
     }
   };
@@ -749,7 +738,7 @@ public final class TypeAdapters {
       }
     }
 
-    @Override public void write(JsonWriter out, JsonElement value) throws IOException {
+    @Override public void write(JsonWriter out, JsonElement value, Set<String> hashSet) throws IOException {
       if (value == null || value.isJsonNull()) {
         out.nullValue();
       } else if (value.isJsonPrimitive()) {
@@ -765,7 +754,7 @@ public final class TypeAdapters {
       } else if (value.isJsonArray()) {
         out.beginArray();
         for (JsonElement e : value.getAsJsonArray()) {
-          write(out, e);
+          write(out, e, hashSet);
         }
         out.endArray();
 
@@ -773,7 +762,7 @@ public final class TypeAdapters {
         out.beginObject();
         for (Map.Entry<String, JsonElement> e : value.getAsJsonObject().entrySet()) {
           out.name(e.getKey());
-          write(out, e.getValue());
+          write(out, e.getValue(), hashSet);
         }
         out.endObject();
 
@@ -816,7 +805,7 @@ public final class TypeAdapters {
       return nameToConstant.get(in.nextString());
     }
 
-    @Override public void write(JsonWriter out, T value) throws IOException {
+    @Override public void write(JsonWriter out, T value, Set<String> hashSet) throws IOException {
       out.value(value == null ? null : constantToName.get(value));
     }
   }
@@ -902,8 +891,8 @@ public final class TypeAdapters {
           return null;
         }
         return (TypeAdapter<T2>) new TypeAdapter<T1>() {
-          @Override public void write(JsonWriter out, T1 value) throws IOException {
-            typeAdapter.write(out, value);
+          @Override public void write(JsonWriter out, T1 value, Set<String> hashSet) throws IOException {
+            typeAdapter.write(out, value, hashSet);
           }
 
           @Override public T1 read(JsonReader in) throws IOException {

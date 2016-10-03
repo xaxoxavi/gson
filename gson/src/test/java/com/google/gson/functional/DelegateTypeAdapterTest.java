@@ -17,7 +17,9 @@ package com.google.gson.functional;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -78,9 +80,10 @@ public class DelegateTypeAdapterTest extends TestCase {
       final TypeAdapter<T> delegate = gson.getDelegateAdapter(this, type);
       return new TypeAdapter<T>() {
         @Override
-        public void write(JsonWriter out, T value) throws IOException {
+        public void write(JsonWriter out, T value,Set<String> hashSet) throws IOException {
           ++numWrites;
-          delegate.write(out, value);
+
+          delegate.write(out, value, hashSet);
         }
 
         @Override

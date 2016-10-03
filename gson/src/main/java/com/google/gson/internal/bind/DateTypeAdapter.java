@@ -31,6 +31,7 @@ import java.text.ParseException;
 import java.text.ParsePosition;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Adapter for Date. Although this class appears stateless, it is not.
@@ -75,7 +76,7 @@ public final class DateTypeAdapter extends TypeAdapter<Date> {
     }
   }
 
-  @Override public synchronized void write(JsonWriter out, Date value) throws IOException {
+  @Override public synchronized void write(JsonWriter out, Date value, Set<String> hashSet) throws IOException {
     if (value == null) {
       out.nullValue();
       return;

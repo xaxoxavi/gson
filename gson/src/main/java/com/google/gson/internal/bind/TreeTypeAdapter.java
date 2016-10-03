@@ -32,6 +32,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.Set;
 
 /**
  * Adapts a Gson 1.x tree-style adapter as a streaming TypeAdapter. Since the
@@ -69,9 +70,9 @@ public final class TreeTypeAdapter<T> extends TypeAdapter<T> {
     return deserializer.deserialize(value, typeToken.getType(), context);
   }
 
-  @Override public void write(JsonWriter out, T value) throws IOException {
+  @Override public void write(JsonWriter out, T value, Set<String> hashSet) throws IOException {
     if (serializer == null) {
-      delegate().write(out, value);
+      delegate().write(out, value, hashSet);
       return;
     }
     if (value == null) {

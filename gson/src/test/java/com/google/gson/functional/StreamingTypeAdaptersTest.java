@@ -29,12 +29,8 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import junit.framework.TestCase;
 
 public final class StreamingTypeAdaptersTest extends TestCase {
@@ -105,7 +101,7 @@ public final class StreamingTypeAdaptersTest extends TestCase {
         String name = in.nextString();
         return new Person(name, -1);
       }
-      @Override public void write(JsonWriter out, Person value) throws IOException {
+      @Override public void write(JsonWriter out, Person value, Set<String> hashSet) throws IOException {
         out.value(value.name);
       }
     };
@@ -157,7 +153,7 @@ public final class StreamingTypeAdaptersTest extends TestCase {
         String[] values = in.nextString().split(",");
         return new Person(values[0], Integer.parseInt(values[1]));
       }
-      public void write(JsonWriter out, Person person) throws IOException {
+      public void write(JsonWriter out, Person person, Set<String> hashSet) throws IOException {
         out.value(person.name + "," + person.age);
       }
     };
@@ -248,7 +244,8 @@ public final class StreamingTypeAdaptersTest extends TestCase {
   private static <T> String toJson(TypeAdapter<T> typeAdapter, T value) throws IOException {
     StringWriter stringWriter = new StringWriter();
     JsonWriter writer = new JsonWriter(stringWriter);
-    typeAdapter.write(writer, value);
+    Set<String> hashSet = new HashSet<String>();
+    typeAdapter.write(writer, value, hashSet);
     return stringWriter.toString();
   }
 
